@@ -52,24 +52,29 @@
 
 (defcustom corfu-count 10
   "Maximal number of candidates to show."
-  :type 'natnum)
+  :type 'natnum
+  :group 'corfu)
 
 (defcustom corfu-scroll-margin 2
   "Number of lines at the top and bottom when scrolling.
 The value should lie between 0 and corfu-count/2."
-  :type 'natnum)
+  :type 'natnum
+  :group 'corfu)
 
 (defcustom corfu-min-width 15
   "Popup minimum width in characters."
-  :type 'natnum)
+  :type 'natnum
+  :group 'corfu)
 
 (defcustom corfu-max-width 100
   "Popup maximum width in characters."
-  :type 'natnum)
+  :type 'natnum
+  :group 'corfu)
 
 (defcustom corfu-cycle nil
   "Enable cycling for `corfu-next' and `corfu-previous'."
-  :type 'boolean)
+  :type 'boolean
+  :group 'corfu)
 
 (defcustom corfu-on-exact-match 'insert
   "Configure how a single exact match should be handled.
@@ -77,21 +82,24 @@ The value should lie between 0 and corfu-count/2."
 - insert: Insert candidate, quit and call the `:exit-function'.
 - quit: Quit completion without further action.
 - show: Initiate completion even for a single match only."
-  :type '(choice (const insert) (const show) (const quit) (const nil)))
+  :type '(choice (const insert) (const show) (const quit) (const nil))
+  :group 'corfu)
 
 (defcustom corfu-continue-commands
   ;; nil is undefined command
   '(nil ignore universal-argument universal-argument-more digit-argument
-    "\\`corfu-" "\\`scroll-other-window")
+        "\\`corfu-" "\\`scroll-other-window")
   "Continue Corfu completion after executing these commands.
 The list can container either command symbols or regular expressions."
-  :type '(repeat (choice regexp symbol)))
+  :type '(repeat (choice regexp symbol))
+  :group 'corfu)
 
 (defcustom corfu-preview-current 'insert
   "Preview currently selected candidate.
 If the variable has the value `insert', the candidate is automatically
 inserted on further input."
-  :type '(choice boolean (const insert)))
+  :type '(choice boolean (const insert))
+  :group 'corfu)
 
 (defcustom corfu-preselect 'valid
   "Configure if the prompt or first candidate is preselected.
@@ -99,7 +107,8 @@ inserted on further input."
 - first: Always select the first candidate.
 - valid: Only select the prompt if valid and not equal to the first candidate.
 - directory: Like first, but select the prompt if it is a directory."
-  :type '(choice (const prompt) (const valid) (const first) (const directory)))
+  :type '(choice (const prompt) (const valid) (const first) (const directory))
+  :group 'corfu)
 
 (defcustom corfu-separator ?\s
   "Component separator character.
@@ -109,14 +118,16 @@ boundaries, so that any further characters can be entered.  To enter the
 first separator character, call `corfu-insert-separator' (bound to M-SPC
 by default).  Useful for multi-component completion styles such as
 Orderless."
-  :type 'character)
+  :type 'character
+  :group 'corfu)
 
 (defcustom corfu-quit-at-boundary 'separator
   "Automatically quit at completion boundary.
 nil: Never quit at completion boundary.
 t: Always quit at completion boundary.
 separator: Quit at boundary if no `corfu-separator' has been inserted."
-  :type '(choice boolean (const separator)))
+  :type '(choice boolean (const separator))
+  :group 'corfu)
 
 (defcustom corfu-quit-no-match 'separator
   "Automatically quit if no matching candidate is found.
@@ -126,19 +137,23 @@ nil: Stay alive even if there is no match.
 t: Quit if there is no match.
 separator: Only stay alive if there is no match and
 `corfu-separator' has been inserted."
-  :type '(choice boolean (const separator)))
+  :type '(choice boolean (const separator))
+  :group 'corfu)
 
 (defcustom corfu-left-margin-width 0.5
   "Width of the left margin in units of the character width."
-  :type 'float)
+  :type 'float
+  :group 'corfu)
 
 (defcustom corfu-right-margin-width 0.5
   "Width of the right margin in units of the character width."
-  :type 'float)
+  :type 'float
+  :group 'corfu)
 
 (defcustom corfu-bar-width 0.2
   "Width of the bar in units of the character width."
-  :type 'float)
+  :type 'float
+  :group 'corfu)
 
 (defcustom corfu-margin-formatters nil
   "Registry for margin formatter functions.
@@ -146,7 +161,8 @@ Each function of the list is called with the completion metadata as
 argument until an appropriate formatter is found.  The function should
 return a formatter function, which takes the candidate string and must
 return a string, possibly an icon."
-  :type 'hook)
+  :type 'hook
+  :group 'corfu)
 
 (defcustom corfu-sort-function #'corfu-sort-length-alpha
   "Default sorting function.
@@ -155,13 +171,15 @@ This function is used if the completion table does not specify a
   :type `(choice
           (const :tag "No sorting" nil)
           (const :tag "By length and alpha" ,#'corfu-sort-length-alpha)
-          (function :tag "Custom function")))
+          (function :tag "Custom function"))
+  :group 'corfu)
 
 (defcustom corfu-sort-override-function nil
   "Override sort function which overrides the `display-sort-function'.
 This function is used even if a completion table specifies its
 own sort function."
-  :type '(choice (const nil) function))
+  :type '(choice (const nil) function)
+  :group 'corfu)
 
 (defcustom corfu-auto-prefix 3
   "Minimum length of prefix for auto completion.
@@ -169,27 +187,31 @@ The completion backend can override this with
 :company-prefix-length.  It is *not recommended* to use a small
 prefix length (below 2), since this will create high load for
 Emacs.  See also `corfu-auto-delay'."
-  :type 'natnum)
+  :type 'natnum
+  :group 'corfu)
 
 (defcustom corfu-auto-delay 0.2
   "Delay for auto completion.
 It is *not recommended* to use a short delay or even 0, since
 this will create high load for Emacs, in particular if executing
 the completion backend is costly."
-  :type 'float)
+  :type 'float
+  :group 'corfu)
 
 (defcustom corfu-auto-commands
   '("self-insert-command\\'" "delete-backward-char\\'" "\\`backward-delete-char"
     c-electric-colon c-electric-lt-gt c-electric-slash c-scope-operator)
   "Commands which initiate auto completion.
 The list can container either command symbols or regular expressions."
-  :type '(repeat (choice regexp symbol)))
+  :type '(repeat (choice regexp symbol))
+  :group 'corfu)
 
 (defcustom corfu-auto nil
   "Enable auto completion.
 See also the settings `corfu-auto-delay', `corfu-auto-prefix' and
 `corfu-auto-commands'."
-  :type 'boolean)
+  :type 'boolean
+  :group 'corfu)
 
 (defgroup corfu-faces nil
   "Faces used by Corfu."
@@ -200,7 +222,9 @@ See also the settings `corfu-auto-delay', `corfu-auto-prefix' and
   '((((class color) (min-colors 88) (background dark)) :background "#191a1b")
     (((class color) (min-colors 88) (background light)) :background "#f0f0f0")
     (t :background "gray"))
-  "Default face, foreground and background colors used for the popup.")
+  "Default face, foreground and background colors used for the popup."
+  :group 'corfu-faces
+  :group 'faces)
 
 (defface corfu-current
   '((((class color) (min-colors 88) (background dark))
@@ -208,27 +232,37 @@ See also the settings `corfu-auto-delay', `corfu-auto-prefix' and
     (((class color) (min-colors 88) (background light))
      :background "#c0efff" :foreground "black")
     (t :background "blue" :foreground "white"))
-  "Face used to highlight the currently selected candidate.")
+  "Face used to highlight the currently selected candidate."
+  :group 'corfu-faces
+  :group 'faces)
 
 (defface corfu-bar
   '((((class color) (min-colors 88) (background dark)) :background "#a8a8a8")
     (((class color) (min-colors 88) (background light)) :background "#505050")
     (t :background "gray"))
-  "The background color is used for the scrollbar indicator.")
+  "The background color is used for the scrollbar indicator."
+  :group 'corfu-faces
+  :group 'faces)
 
 (defface corfu-border
   '((((class color) (min-colors 88) (background dark)) :background "#323232")
     (((class color) (min-colors 88) (background light)) :background "#d7d7d7")
     (t :background "gray"))
-  "The background color used for the thin border.")
+  "The background color used for the thin border."
+  :group 'corfu-faces
+  :group 'faces)
 
 (defface corfu-annotations
   '((t :inherit completions-annotations))
-  "Face used for annotations.")
+  "Face used for annotations."
+  :group 'corfu-faces
+  :group 'faces)
 
 (defface corfu-deprecated
   '((t :inherit shadow :strike-through t))
-  "Face used for deprecated candidates.")
+  "Face used for deprecated candidates."
+  :group 'corfu-faces
+  :group 'faces)
 
 (defvar-keymap corfu-mode-map
   :doc "Keymap used when `corfu-mode' is active.")
@@ -1354,7 +1388,8 @@ symbols or elements of the form (not modes).  Examples:
   - Enable everywhere, except in Org: ((not org-mode) t).
   - Enable in programming modes except Python: ((not python-mode) prog-mode).
   - Enable only in text modes: (text-mode)."
-  :type '(choice (const t) (repeat sexp)))
+  :type '(choice (const t) (repeat sexp))
+  :group 'corfu)
 
 ;; TODO use `:predicate' on Emacs 29
 (defcustom global-corfu-minibuffer t
@@ -1362,7 +1397,8 @@ symbols or elements of the form (not modes).  Examples:
 The variable can either be t, nil or a custom predicate function.  If
 the variable is set to t, Corfu is only enabled if the minibuffer has
 local `completion-at-point-functions'."
-  :type '(choice (const t) (const nil) function))
+  :type '(choice (const t) (const nil) function)
+  :group 'corfu)
 
 ;;;###autoload
 (define-globalized-minor-mode global-corfu-mode
