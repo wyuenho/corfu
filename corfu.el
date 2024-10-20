@@ -761,10 +761,27 @@ returns an empty string."
 
 (defun corfu--format-candidates (cands curr)
   "Format annotated CANDS.
-CURR is the currently selected candidate."
-  (let* ((cw (cl-loop for x in cands maximize (string-pixel-width (car x))))
-         (pw (cl-loop for x in cands maximize (string-pixel-width (cadr x))))
-         (sw (cl-loop for x in cands maximize (string-pixel-width (caddr x))))
+CURR is index of the currently selected candidate."
+  (let* ((cw 0)
+         (pw 0)
+         (sw 0)
+         (cands (cl-loop for (c p s) in cands
+                         with triple = nil
+                         do
+                         (let (cpw ppw spw)
+                           (setq c (car x)
+                                 p (cadr x)
+                                 s (caddr x)
+                                 cpw (string-pixel-width c)
+                                 ppw (string-pixel-width p)
+                                 spw (string-pixel-width s)
+                                 cw (max cw cpw)
+                                 pw (max pw ppw)
+                                 sw (max sw spw)
+                                 triple (list (cons cpw c)
+                                              (cons ppw p)
+                                              (cons spw s))))
+                         collect triple))
          (width (+ pw cw sw))
          (fw (default-font-width))
          (min-width (* corfu-min-width fw))
@@ -782,7 +799,7 @@ CURR is the currently selected candidate."
     (when (< width min-width)
       (setq cw (+ cw (- min-width width))))
 
-    (cl-loop for (cand prefix suffix) in cands
+    (cl-loop for ((cand-width . cand) (prefix-width . prefix) (suffix-width . suffix)) in cands
              with i = 0
              do
              ;; `corfu-current' may affect width too
@@ -790,8 +807,13 @@ CURR is the currently selected candidate."
                (cl-loop for s in (list cand prefix suffix)
                         do (add-face-text-property 0 (length s) 'corfu-current t s)))
 
-             (setq cand (corfu--truncate-string-to-pixel-width cand cw)
-                   suffix (corfu--truncate-string-to-pixel-width suffix sw))
+             (when (> cand-width cw)
+               (setq cand (corfu--truncate-string-to-pixel-width cand cw)
+                     cand-width (string-pixel-width cand)))
+
+             (when (> suffix-width sw)
+               (setq suffix (corfu--truncate-string-to-pixel-width suffix sw)
+                     suffix-width (string-pixel-width suffix)))
 
              (cl-incf i)
 
@@ -799,10 +821,10 @@ CURR is the currently selected candidate."
              ;; do not use `:align-to' as it is buggy
              (concat
               prefix
-              (propertize " " 'display `(space :width (,(- pw (string-pixel-width prefix)))))
+              (propertize " " 'display `(space :width (,(- pw prefix-width))))
               cand
-              (propertize " " 'display `(space :width (,(- cw (string-pixel-width cand)))))
-              (propertize " " 'display `(space :width (,(- sw (string-pixel-width suffix)))))
+              (propertize " " 'display `(space :width (,(- cw cand-width))))
+              (propertize " " 'display `(space :width (,(- sw suffix-width))))
               suffix))))
 
 (defun corfu--compute-scroll ()
